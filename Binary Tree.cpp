@@ -15,9 +15,10 @@ class BinaryTreeNode{
         T value() const;
         BinaryTreeNode<T>* leftChild;
         BinaryTreeNode<T>* rightChild;
-        void setValue(const T& info);
-        void setLeftChild(BinaryTreeNode<T>* leftChild);
-        void setRightChild(BinaryTreeNode<T>* rightChild);
+        BinaryTreeNode<T>* parent;
+        void SetValue(const T& info);
+        void SetleftChild(BinaryTreeNode<T>* leftChild);
+        void SetrightChild(BinaryTreeNode<T>* rightChild);
         bool isLeaf() const;
 };
 
@@ -31,7 +32,7 @@ class BinaryTree{
         ~BinaryTree();
         bool isEmpty() const;
         BinaryTreeNode<T>* Root(); 
-        BinaryTreeNode<T>* Parent(BinaryTreeNode<T>* cur); 
+        BinaryTreeNode<T>* parent(BinaryTreeNode<T>* cur); 
         BinaryTreeNode<T>* LeftSibling(BinaryTreeNode<T>* cur); 
         BinaryTreeNode<T>* RightSibling(BinaryTreeNode<T>* cur);
         void CreateTree(
@@ -95,7 +96,7 @@ void levelOrder(BinaryTreeNode<T> *t){
 
 //返回current的父节点
 template<typename T>
-BinaryTreeNode<T>* BinaryTree<T>::Parent(BinaryTreeNode<T>* cur) {
+BinaryTreeNode<T>* BinaryTree<T>::parent(BinaryTreeNode<T>* cur) {
     std::stack<BinaryTreeNode<T>*> stack;
     BinaryTreeNode<T>* pt = this->root;
     if(this->root && cur){
@@ -131,13 +132,13 @@ class BinarySearchTree{
         BinaryTreeNode<T>* root;
     public:
         BinaryTreeNode<T>* Find(BinaryTreeNode<T>* cur);
-        void InsertTreeNode(BinaryTreeNode<T>* root, 
+        void insetTreeNode(BinaryTreeNode<T>* root, 
                             BinaryTreeNode<T>* newPointer);
 };
 
 //二叉搜索树的插入
 template<typename T>
-void BinarySearchTree<T>::InsertTreeNode(BinaryTreeNode<T>* root, BinaryTreeNode<T>* newPointer){
+void BinarySearchTree<T>::insetTreeNode(BinaryTreeNode<T>* root, BinaryTreeNode<T>* newPointer){
     BinaryTreeNode<T>* pointer = 0;
     if(root == 0){
         root = newPointer;
@@ -173,13 +174,13 @@ class MinHeap{
     public:
         MinHeap(const int n);
         virtual ~MinHeap();
-        bool IsLeaf(int pos)const;
-        int	LeftChild(int pos)const;
-        int	RightChild(int pos)const;
-        int	Parent(int pos)const;
-        bool Remove(int pos, T& node);
-        bool Insert(const T& newnode);
-        T& RemoveMin();
+        bool isLeaf(int pos)const;
+        int	leftChild(int pos)const;
+        int	rightChild(int pos)const;
+        int	parent(int pos)const;
+        bool remove(int pos, T& node);
+        bool inset(const T& newnode);
+        T& removeMin();
         void SiftUp(int pos); 	//向上筛
         void SiftDown(int pos);//向下筛
 };
@@ -196,26 +197,26 @@ MinHeap< T >::MinHeap(const int n){
 
 //判断是否为叶节点
 template < typename T >
-bool MinHeap< T >::IsLeaf(int pos) const {
+bool MinHeap< T >::isLeaf(int pos) const {
 	return (pos >= this->curSize/2) && //该位置处于堆的下半部分
 		 (pos <= this->curSize-1); //堆的索引从0开始
 }
 
 //返回父节点位置
 template < typename T >
-int MinHeap< T >::Parent(int pos) const {
+int MinHeap< T >::parent(int pos) const {
 	return (pos-1)/2;
 }
 
 //返回左子节点位置
 template < typename T >
-int MinHeap< T >::LeftChild(int pos)const {
+int MinHeap< T >::leftChild(int pos)const {
 	return pos*2+1;
 }
 
 //返回右子节点位置
 template < typename T >
-int MinHeap< T >::RightChild(int pos) const {
+int MinHeap< T >::rightChild(int pos) const {
 	return pos*2+2;
 }
 
@@ -231,7 +232,7 @@ void MinHeap< T >::BuildHeap(){
 template < typename T >
 void MinHeap< T >::SiftDown(int pos){
 	int i = pos;  //标识父节点位置
-	int j = this->LeftChild(i);  //获得左子节点位置
+	int j = this->leftChild(i);  //获得左子节点位置
 	T temp = this->heapArray[i];  //临时存储父节点的值
 	while( j < this->curSize){	
 		if((j < this->curSize-1) && 
@@ -241,7 +242,7 @@ void MinHeap< T >::SiftDown(int pos){
 		if(temp > this->heapArray[j]){//如果父节点大于子节点值
 			this->heapArray[i] = this->heapArray[j];  //子节点值上移
 			i = j;  //原父节点位置更新为子节点位置
-			j = this->LeftChild(j);
+			j = this->leftChild(j);
 		}else break;   
 	}
 	this->heapArray[i] = temp;
@@ -263,7 +264,7 @@ void MinHeap< T >::SiftUp(int pos){
 
 //插入新元素
 template < typename T >
-bool MinHeap< T >::Insert( const T& newnode){
+bool MinHeap< T >::inset( const T& newnode){
 	if(this->curSize == this->maxSize)
 		return false;
 	this->heapArray[this->curSize] = newnode;  	//将新元素存入堆存储数组最后一个
@@ -274,7 +275,7 @@ bool MinHeap< T >::Insert( const T& newnode){
 
 //移除最小值
 template < typename T >
-T& MinHeap< T >::RemoveMin(){
+T& MinHeap< T >::removeMin(){
 	if(this->curSize == 0 ){
 		std::cout<<"No item to delete"<<std::endl;
 		exit(1);
@@ -290,7 +291,7 @@ T& MinHeap< T >::RemoveMin(){
 
 //删除元素
 template < typename T >
-bool MinHeap< T >::Remove(int pos, T& node){
+bool MinHeap< T >::remove(int pos, T& node){
 	if(( pos < 0) || ( pos >= this->curSize))
 		return false;
 	node = this->heapArray[pos];
@@ -302,4 +303,48 @@ bool MinHeap< T >::Remove(int pos, T& node){
 	return true;
 }
 
+//哈夫曼树--类定义
+template<typename T>
+class HuffmanTree {
+private:
+    BinaryTreeNode<T>* root;
+private:
+    void mergeTree(BinaryTreeNode<T>* leftChild, BinaryTreeNode<T>* rightChild, BinaryTreeNode<T>* parent);
+    void deleteTree(BinaryTreeNode<T>* root);
+public:
+    HuffmanTree(T weight[], int n);
+    virtual ~HuffmanTree();
+};
 
+//子树合并父节点（哈夫曼树）	
+template<typename T>
+void HuffmanTree<T>::mergeTree(BinaryTreeNode<T>* leftChild, BinaryTreeNode<T>* rightChild, BinaryTreeNode<T>* parent) {
+    parent = new BinaryTreeNode<T>();
+    parent->left = leftChild;
+    parent->right = rightChild;
+    parent->value = leftChild->value + rightChild->value;
+}
+
+//构造函数（哈夫曼树）
+template<typename T>
+HuffmanTree<T>::HuffmanTree(T weight[], int n) {
+    MinHeap<BinaryTreeNode<T>> heap(n);
+    BinaryTreeNode<T>* parent = nullptr;
+    BinaryTreeNode<T>* leftChild = nullptr;
+    BinaryTreeNode<T>* rightChild = nullptr;
+    BinaryTreeNode<T>* nodeList = new BinaryTreeNode<T>[n];
+    for (int i = 0; i < n; i++) {  //构建二叉树
+        nodeList[i].value = weight[i];
+        nodeList[i].parent = nodeList[i].leftChild = nodeList[i].rightChild = nullptr;  //父子关系还未明确就先置为空
+        heap.inset(nodeList[i]);
+    }
+    for (int i = 0; i < n - 1; i++) {
+        parent = new BinaryTreeNode<T>();
+        leftChild = &heap.removeMin();  //heap.removeMin()返回的是对象，而leftChild是指针，所以用&获取地址
+        rightChild = &heap.removeMin();
+        mergeTree(leftChild, rightChild, parent);
+        heap.insert(*parent);
+    }
+    this->root = parent;
+    delete[] nodeList;
+}
